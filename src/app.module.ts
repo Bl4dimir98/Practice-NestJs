@@ -2,43 +2,41 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BookModule } from './book/book.module';
-import { BookController } from './book/book.controller';
-import { BookService } from './book/book.service';
-import { Book } from './book/entities/book.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DB_DATABASE, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD } from 'config/constants';
 import { UserModule } from './user/user.module';
-import { UserReader } from './user/entities/user.entity';
-import { UserController } from './user/user.controller';
-import { UserService } from './user/user.service';
+import { BookModule } from './book/book.module';
 
 @Module({
   imports: [
-    BookModule,
-    TypeOrmModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '5366',
-      database: 'practice-nestjs', //Aqui va el nombre de la BDD
-      autoLoadEntities: true, //Actualiza automáticamente
-      synchronize: true, //
-      dropSchema: false,// Borra el squema y la data
-      entities: [__dirname + '/**/*.entity{.ts,.js}']
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true
     }),
-    TypeOrmModule.forFeature([Book, UserReader]),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>(DB_HOST),
+        port: +configService.get<number>(DB_PORT),
+        username: configService.get<string>(DB_USER),
+        password: configService.get<string>(DB_PASSWORD),
+        database: configService.get<string>(DB_DATABASE), //Aqui va el nombre de la BDD
+        entities: [__dirname + '/**/*.entity{.ts,.js}'], // Reconoce las entidades
+        autoLoadEntities: true, //Actualiza automáticamente
+        synchronize: true,
+        logging: false
+      }),
+      inject: [ConfigService]
+    }),
     UserModule,
+    BookModule
   ],
   controllers: [
     AppController,
-    BookController,
-    UserController
   ],
   providers: [
     AppService,
-    BookService,
-    UserService
   ],
 })
 export class AppModule { }

@@ -1,24 +1,17 @@
-import { UserReader } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { UserEntity } from "src/user/entities/user.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'books' })
-export class Book {
+export class BookEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
-
-
-    @Column()
-    barCode: number
-    @Column()
+    @Column({ type: 'varchar' })
     title: string;
-    @Column()
-    author: string;
-    @Column()
-    country: string;
-    @Column()
-    yearPublic: number;
 
-    @ManyToOne(() => UserReader, userReader => userReader.books)
-    users: UserReader[];
+    // Relación
+    @ManyToOne(() => UserEntity, (users => users.bookTitle))
+    user?: UserEntity;
+
+
 
 }

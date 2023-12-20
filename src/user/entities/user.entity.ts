@@ -1,20 +1,25 @@
-import { Book } from "src/book/entities/book.entity";
+import { BookEntity } from "src/book/entities/book.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'users' })
-export class UserReader {
+export class UserEntity {
     @PrimaryGeneratedColumn('increment')
     idUser: number;
 
-    @Column()
+    @Column({ type: 'varchar' })
     name: string
 
-    @Column()
+    @Column({ type: 'varchar' })
     fullName: string;
 
-    @Column()
+    @Column({ type: 'int', default: 0 })
     phone: number;
-
-    @OneToMany(() => Book, book => book.users)
-    books: UserReader[];
+    // relación
+    @OneToMany(() => BookEntity, (books) => books.user,
+        {
+            cascade: true,
+            eager: true
+        }
+    )
+    bookTitle?: BookEntity[];
 }

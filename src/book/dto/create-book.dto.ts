@@ -1,6 +1,8 @@
 import {
+    IsArray,
     IsNotEmpty,
     IsNumber,
+    IsOptional,
     IsString
 } from "class-validator";
 
@@ -8,7 +10,7 @@ import {
 export class CreateBookDto {
     @IsNotEmpty()
     @IsNumber()
-    readonly barCode: number;
+    readonly barCode: string;
 
     @IsNotEmpty()
     @IsString()
@@ -25,6 +27,7 @@ export class CreateBookDto {
     @IsNotEmpty()
     @IsNumber()
     readonly yearPublic: number;
+
 
 
 }

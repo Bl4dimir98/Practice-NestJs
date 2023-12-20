@@ -1,7 +1,7 @@
 import { Injectable, Body, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Book } from './entities/book.entity';
+import { BookEntity } from './entities/book.entity';
 // Dtos 
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -10,22 +10,16 @@ import { PaginationBookDto } from './dto/pagination-book.dto';
 @Injectable()
 export class BookService {
 
-  constructor(@InjectRepository(Book) private readonly bookRepository: Repository<Book>,
+  constructor(
+    @InjectRepository(BookEntity) private readonly bookRepository: Repository<BookEntity>,
   ) { }
   //Create
   async create(createBookDto: CreateBookDto) {
-    const book = this.bookRepository.create(createBookDto);
-    await this.bookRepository.save(book);
-    return book;
+
   }
   //Find All - Paginación 
   async findAll(PaginationBookDto: PaginationBookDto) {
-    const { limit = 10, offset = 0 } = PaginationBookDto;
-    return await this.bookRepository.find({
-      take: limit,
-      skip: offset
-    });
-    // return await this.bookRepository.find();
+
   }
   //Find One
   async findOne(id: number) {
